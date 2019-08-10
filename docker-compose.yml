@@ -1,0 +1,57 @@
+version: '3' 
+services:
+
+   test-mongo:
+      image: mongo
+      container_name: docker-mongo
+      command: --smallfiles
+
+                 
+      
+   track-service:
+#      image:
+#          docker-spring
+      build: track-service/
+      restart: always
+      container_name: track-service
+      links:
+        - test-mongo
+        - configuration-server
+        - eureka-server
+        - api-gateway
+
+      depends_on:
+        - test-mongo
+        - configuration-server
+        - api-gateway
+
+      ports:
+           - 8079:8079
+
+
+   configuration-server:
+#      image:
+#          docker-configuration
+      build: configuration-server/
+      restart: always
+      container_name: configuration-server
+
+
+
+   eureka-server:
+#      image:
+#          docker-eureka
+      build: eureka-server/
+      restart: always
+      container_name: eureka-server
+      ports:
+           - 9090:9090
+
+
+   api-gateway:
+     build: api-gateway/
+     restart: always
+     container_name: api-gateway
+     ports:
+       - 8076:8076
+
